@@ -1,0 +1,82 @@
+/* 
+Here's the structure for the Excel template with multiple sheets:
+
+Sheet 1: Students
+Columns:
+- PRN
+- Name
+- Course
+- Semester
+
+Sheet 2: MSE Marks
+Columns:
+- PRN
+- Subject Code
+- Marks Obtained
+- Maximum Marks
+- Date
+
+Sheet 3: ESE Marks
+Columns:
+- PRN
+- Subject Code
+- Marks Obtained
+- Maximum Marks
+- Date
+
+Sheet 4: CA Marks
+Columns:
+- PRN
+- Subject Code
+- Assignment 1
+- Assignment 2
+- Quiz 1
+- Quiz 2
+- Total CA
+- Maximum Marks
+
+Sheet 5: IA Marks
+Columns:
+- PRN
+- Subject Code
+- Lab Performance
+- Lab Records
+- Lab Viva
+- Total IA
+- Maximum Marks
+
+Sheet 6: Subjects
+Columns:
+- Subject Code
+- Subject Name
+- Maximum Marks (MSE)
+- Maximum Marks (ESE)
+- Maximum Marks (CA)
+- Maximum Marks (IA)
+- Pass Percentage Required
+
+Example data for testing:
+
+Students:
+PRN2023001, John Doe, B.Tech CSE, 4
+PRN2023002, Jane Smith, B.Tech CSE, 4
+
+MSE Marks:
+PRN2023001, CS401, 28, 30, 2024-02-15
+PRN2023002, CS401, 25, 30, 2024-02-15
+
+ESE Marks:
+PRN2023001, CS401, 65, 70, 2024-05-20
+PRN2023002, CS401, 62, 70, 2024-05-20
+
+CA Marks:
+PRN2023001, CS401, 8, 7, 9, 8, 32, 40
+PRN2023002, CS401, 7, 8, 8, 9, 32, 40
+
+IA Marks:
+PRN2023001, CS401, 18, 15, 17, 50, 60
+PRN2023002, CS401, 16, 17, 15, 48, 60
+
+Subjects:
+CS401, Advanced Programming, 30, 70, 40, 60, 40
+*/
