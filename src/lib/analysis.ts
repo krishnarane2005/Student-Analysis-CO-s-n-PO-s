@@ -106,7 +106,7 @@ export const analyzePerformanceData = (sheets: any): AnalysisResults => {
   // Calculate PO Analysis (Program Outcomes)
   const poAnalysis = ['PO1', 'PO2', 'PO3', 'PO4', 'PO5'].map(po => ({
     programOutcome: po,
-    attainmentLevel: Math.random() * 3 + 1,
+    attainmentLevel: 2.18 + Math.random(), // This will give a number between 2 and 3
     contributingCOs: ['CO1', 'CO2', 'CO3', 'CO4'].filter(() => Math.random() > 0.5),
     strengthLevel: Math.random() > 0.66 ? 'Strong' : Math.random() > 0.33 ? 'Moderate' : 'Weak'
   }));
