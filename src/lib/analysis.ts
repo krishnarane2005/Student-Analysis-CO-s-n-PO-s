@@ -110,6 +110,90 @@ export const analyzePerformanceData = (sheets: any): AnalysisResults => {
     contributingCOs: ['CO1', 'CO2', 'CO3', 'CO4'].filter(() => Math.random() > 0.5),
     strengthLevel: Math.random() > 0.66 ? 'Strong' : Math.random() > 0.33 ? 'Moderate' : 'Weak'
   }));
+  // Resolved merge conflict: kept the more detailed CO/PO calculation logic from the remote branch, as it provides more realistic mapping and attainment calculations.
+
+  // --- CO/PO Mapping (generic, update as needed) ---
+  const coQuestionMap: Record<string, string[]> = {
+    CO1: ['Q1', 'Q2'],
+    CO2: ['Q3', 'Q4'],
+    CO3: ['Q5', 'Q6'],
+    CO4: ['Q7', 'Q8'],
+  };
+  const poCoMap: Record<string, string[]> = {
+    PO1: ['CO1', 'CO2'],
+    PO2: ['CO2', 'CO3'],
+    PO3: ['CO3', 'CO4'],
+    PO4: ['CO1', 'CO4'],
+    PO5: ['CO1', 'CO2', 'CO3', 'CO4'],
+  };
+
+  // Set different targets for each CO
+  const CO_TARGETS: Record<string, number> = {
+    CO1: 52,
+    CO2: 53,
+    CO3: 52,
+    CO4: 50,
+  };
+
+  // --- CO Analysis (Direct Assessment, using total marks) ---
+  const coAnalysis = subjects.flatMap((subject: any) => {
+    // For each CO, use total marks from all assessments for the subject
+    return ['CO1', 'CO2', 'CO3', 'CO4'].map((co: string) => {
+      let totalScore = 0;
+      let studentsMetTarget = 0;
+      let studentCount = 0;
+      const target = CO_TARGETS[co] || 60;
+      students.forEach((student: any) => {
+        const mse = mseMarks.find((m: any) => m.PRN === student.PRN && m['Subject Code'] === subject['Subject Code']);
+        const ese = eseMarks.find((m: any) => m.PRN === student.PRN && m['Subject Code'] === subject['Subject Code']);
+        const ca = caMarks.find((m: any) => m.PRN === student.PRN && m['Subject Code'] === subject['Subject Code']);
+        const ia = iaMarks.find((m: any) => m.PRN === student.PRN && m['Subject Code'] === subject['Subject Code']);
+
+        const studentScore = 
+          (mse?.['Marks Obtained'] || 0) +
+          (ese?.['Marks Obtained'] || 0) +
+          (ca?.['Total CA'] || 0) +
+          (ia?.['Total IA'] || 0);
+
+        const studentMax = 
+          (mse?.['Maximum Marks'] || 0) +
+          (ese?.['Maximum Marks'] || 0) +
+          (ca?.['Maximum Marks'] || 0) +
+          (ia?.['Maximum Marks'] || 0);
+
+        if (studentMax > 0) {
+          const percent = (studentScore / studentMax) * 100;
+          console.log(`CO DEBUG | Student: ${student.PRN}, Subject: ${subject['Subject Code']}, CO: ${co}, Score: ${studentScore}, Max: ${studentMax}, Percent: ${percent}, Target: ${target}`);
+          totalScore += percent;
+          if (percent >= target) studentsMetTarget++;
+          studentCount++;
+        }
+      });
+      const attainmentLevel = (totalScore / (studentCount || 1)) / 100 * 3; // Scale to 3
+      const achievementPercentage = (studentsMetTarget / (studentCount || 1)) * 100;
+      const targetAchieved = achievementPercentage >= target;
+      return {
+        subjectCode: subject['Subject Code'],
+        coNumber: co,
+        attainmentLevel,
+        achievementPercentage,
+        targetAchieved
+      };
+    });
+  });
+
+  // --- PO Analysis (Aggregate COs) ---
+  const poAnalysis = Object.entries(poCoMap).map(([po, cos]: [string, string[]]) => {
+    const coAttainments = coAnalysis.filter((ca: any) => cos.includes(ca.coNumber));
+    const attainmentLevel = coAttainments.reduce((sum: number, ca: any) => sum + ca.attainmentLevel, 0) / (coAttainments.length || 1);
+    const strengthLevel: 'Strong' | 'Moderate' | 'Weak' = attainmentLevel >= 2.5 ? 'Strong' : attainmentLevel >= 1.5 ? 'Moderate' : 'Weak';
+    return {
+      programOutcome: po,
+      attainmentLevel,
+      contributingCOs: cos,
+      strengthLevel
+    };
+  });
 
   // Calculate Student-wise Analysis
   const studentWiseAnalysis = students.map((student: any) => {
